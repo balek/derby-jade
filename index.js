@@ -39,9 +39,7 @@ function preprocess(source) {
     // we cheat Jade, because it has it`s own statements
     .replace(/^([ \t]+)(if|else(?:[ \t]+if)?|unless|each|with|bound|unbound|on)((?:[ \t]|\().+)?$/gm,
       function (statement, indentation, type, expression) {
-        if (options.coffee) {
-          expression = ' ' + coffee(expression);
-        }
+        if (options.coffee) expression = ' ' + coffee(expression, true);
         return indentation + '__derby-statement(type=\"' + type + '\"' +
           (expression ? ' value=\"' + escape(expression) + '\"' : '') + ')';
     })
@@ -56,12 +54,12 @@ function preprocess(source) {
         block = expression;
         expression = '';
       }
-      if (options.coffee) expression = coffee(expression);
+      if (options.coffee) expression = coffee(expression, true);
       return '{{' + block + expression + '}}';
     })
     // Make Derby attribues unescaped
     .replace(/on-(.*?)=(['"])(.*?)\2/gm, function(statement, type, quote, expression) {
-      if (options.coffee) expression = coffee(expression);
+      if (options.coffee) expression = coffee(expression, true);
       return 'on-' + type + '!=\"' + expression + '\"';
     });
 }
@@ -190,7 +188,7 @@ function compiler(file, fileName, preprocessOnly, jadeOptions) {
     }
     if (statement.indexOf('script ') === 0) {
       // Script line
-      if (options.coffee) statement = 'script ' + coffee(statement.slice(7));
+      if (options.coffee) statement = 'script ' + coffee(statement.slice(7), true);
       block.push(addindent(statement, indent));
       debug(debugString + ', script line');
       continue;
