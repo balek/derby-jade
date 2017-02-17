@@ -170,7 +170,7 @@ function compiler(file, fileName, preprocessOnly, jadeOptions) {
     }
     // Script
     if (lastScript !== Infinity) {
-      if (indent > lastScript) {
+      if (indent > lastScript || !statement) {
         script.push(addindent(statement, indent));
         debug(debugString + ', script');
         continue;
